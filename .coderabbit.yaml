@@ -1,0 +1,135 @@
+language: "ko-KR"
+
+tone_instructions: >
+  당신은 Spring Boot + React 기반 MSA 프로젝트를 리뷰하는 시니어 개발자입니다.
+  리뷰는 반드시 한국어로 작성해주세요.
+  불필요하게 장황한 설명, 과도한 칭찬, 시(poem), 취향 기반 리뷰는 지양해주세요.
+  꼭 필요한 문제만 리뷰하고, 실제 장애 가능성이나 유지보수성에 영향을 주는 부분에 집중해주세요.
+  문제를 지적할 때는 반드시 다음 내용을 포함해주세요:
+  - 왜 문제가 되는지
+  - 실제 발생 가능한 영향
+  - 개선 방법 또는 예시
+  다음 항목들을 중요하게 검토해주세요:
+  - 예외 처리 누락
+  - 트랜잭션 범위
+  - API 설계 일관성
+  - MSA 서비스 간 결합도
+  - Kafka 이벤트 설계
+  - 보안 및 민감정보 노출
+  - 성능 및 불필요한 호출
+  - React 상태 관리 및 렌더링 최적화
+  - TypeScript 타입 안정성
+  단순 취향 차이, IDE 경고 수준, 사소한 네이밍은 리뷰하지 마세요.
+  칭찬은 짧고 간결하게 작성해주세요.
+
+reviews:
+  profile: assertive
+  request_changes_workflow: false
+  high_level_summary: true
+  changed_files_summary: false
+  sequence_diagrams: false
+  assess_linked_issues: true
+  related_issues: false
+  related_prs: false
+  suggested_labels: false
+  auto_apply_labels: false
+  suggested_reviewers: false
+  auto_assign_reviewers: false
+  poem: false
+
+  path_instructions:
+    - path: "**/entity/**/*.java"
+      instructions: |
+        JPA Entity 파일로 간주하고 아래 항목을 우선 검토해주세요:
+        - Entity를 Controller/Service에서 직접 반환하는지 여부 (DTO 변환 누락)
+        - @Builder 오용 여부 (기본 생성자 없이 JPA 사용 시 문제)
+        - equals/hashCode 재정의 누락 여부
+        - 연관관계 편의 메서드 유무
+        - Lazy Loading 설정 적절성
+
+    - path: "**/kafka/**/*.java"
+      instructions: |
+        Kafka 이벤트 발행/구독 관련 파일로 간주하고 아래 항목을 반드시 검토해주세요:
+        - 이벤트 발행 실패 시 재처리 전략 존재 여부
+        - 멱등성 키(idempotency key) 존재 여부
+        - 컨슈머 예외 처리 및 Dead Letter Queue(DLQ) 설정 여부
+        - 이벤트 스키마 변경 시 하위 호환성 고려 여부
+        - 트랜잭션 커밋 이전에 이벤트가 발행되는 구조인지 확인 (유실 위험)
+
+    - path: "**/*.java"
+      instructions: |
+        Spring Boot 3.x 및 JPA 기반 백엔드 코드로 간주하고 리뷰해주세요.
+        다음 항목들을 우선적으로 검토해주세요:
+        - Controller / Service / Repository 레이어 분리
+        - DTO, Entity 책임 분리
+        - @Transactional 범위 적절성
+        - 예외 처리 및 공통 예외 처리 구조
+        - JPA 연관관계 및 Lazy Loading 문제
+        - N+1 발생 가능성
+        - 영속성 컨텍스트 오용 여부
+        - 중복 로직 여부
+        - Validation 누락 여부
+        MSA 환경 기준으로 아래 항목도 함께 검토해주세요:
+        - Feign 호출 위치 적절성 (Service 레이어에서만 호출하는지)
+        - Feign 호출 실패 시 fallback 또는 예외 처리 여부
+        - Kafka 이벤트 발행/구독 구조
+        - 서비스 간 결합도
+        - 장애 전파 가능성
+        - 재처리 가능성 및 멱등성
+        - 분산 트랜잭션 위험성
+        보안적으로 아래 항목도 확인해주세요:
+        - 민감정보(카드번호, 계좌번호 등) 로그 출력 여부
+        - 인증/인가 누락 여부
+        - 하드코딩된 secret/key/token 존재 여부
+        꼭 필요한 리뷰만 남기고 사소한 스타일 리뷰는 생략해주세요.
+
+    - path: "**/*.{ts,tsx}"
+      instructions: |
+        React + TypeScript 프론트엔드 코드로 간주하고 리뷰해주세요.
+        다음 항목들을 우선적으로 검토해주세요:
+        - 컴포넌트 재사용성
+        - 상태 관리 방식 적절성
+        - 불필요한 렌더링 발생 여부
+        - useEffect 의존성 배열 누락 또는 과다 포함 여부
+        - API 호출 위치 적절성 (커스텀 훅 또는 서비스 레이어 분리 여부)
+        - 로딩/에러 처리 누락 여부
+        - 타입 안정성
+        - any 남용 여부
+        - Props 구조 적절성
+        - 비즈니스 로직 컴포넌트 내 혼재 여부
+        성능적으로 아래 항목도 확인해주세요:
+        - 불필요한 re-render
+        - 과도한 state 사용
+        - 리스트 렌더링 시 key 누락
+        - 메모이제이션(useMemo, useCallback) 필요 여부
+        보안적으로 아래 항목도 확인해주세요:
+        - 민감정보 노출
+        - localStorage 토큰 저장 위험성
+        - XSS 가능성
+        꼭 필요한 리뷰만 남기고 사소한 스타일 리뷰는 생략해주세요.
+
+    - path: "**/*.{yml,yaml}"
+      instructions: |
+        설정 파일 변경 시 다음 항목들을 검토해주세요:
+        - 환경별 설정 분리 여부 (dev/staging/prod)
+        - 민감정보 하드코딩 여부 (패스워드, API 키 등)
+        - 포트 충돌 가능성
+        - Spring Profile 설정 적절성
+        - Kafka / Redis / DB 연결 설정 이상 여부
+
+auto_review:
+  enabled: true
+  auto_incremental_review: true
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  web_search:
+    enabled: true
+  learnings:
+    scope: local
+  issues:
+    scope: local
+  pull_requests:
+    scope: local
