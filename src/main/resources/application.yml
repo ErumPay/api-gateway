@@ -1,0 +1,53 @@
+# API Gateway 애플리케이션 설정 파일 (YAML 형식)
+
+# 게이트웨이 포트
+server:
+  port: 8080
+
+# Spring Boot 설정
+spring:
+  # 애플리케이션 설정
+  application:
+    name: api-gateway
+
+  # Spring Cloud Gateway 설정
+  cloud:
+    gateway:
+      # 전역 CORS(보안) 설정
+      globalcors:
+        cors-configurations:
+          '[/**]':                       # 이하 모든 경로에 대해 허용
+            allowed-origins:
+              - 'http://localhost:3000'  # 프론트엔드 애플리케이션 주소 허용 (예시)
+            allowed-methods: '*'         # 모든 HTTP 메서드 허용
+            allowed-headers: '*'         # 모든 헤더 허용
+            exposed-headers: '*'         # 클라이언트에게 모든 헤더 노출 허용
+            allow-credentials: true      # 자격 증명 포함 요청 허용 (쿠키, 인증 정보 등)
+
+      # 라우팅 설정
+      routes:
+        # billing-key-service 라우팅
+        - id: billing-key-service                       # 라우팅 ID (고유 식별자)
+          uri: http://localhost:8092                    # 대상 서비스 주소 (billing-key-service: 8092)
+          predicates:
+            - Path=/billing-key-service/**              # /billing-key-service/** 경로 매칭
+          filters:
+            - StripPrefix=1                             # 첫번째 접두어 제거
+                                                        # ex) /billing-key-service/api/v1/billing-key/issue
+                                                        #  -> /api/v1/billing-key/issue 로 전달
+
+# 헬스체크 노출
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+# JWT 설정
+jwt:
+  # JWT 서명 비밀키
+  # auth-service의 jwt.secret과 반드시 동일해야 함 (토큰 서명/검증에 같은 키 사용)
+  # NOTE: 운영 시에는 환경변수로 override 권장
+  #       export JWT_SECRET="..." 또는 application-prod.yml에 분리
+  #       나중에 ${JWT_SECRET:기본값} 패턴으로 변경 가능
+  secret: erumpay-auth-service-jwt-secret-key-must-be-at-least-256-bits-long-for-hs256
