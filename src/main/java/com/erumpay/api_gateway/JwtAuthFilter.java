@@ -116,6 +116,13 @@ public class JwtAuthFilter implements GlobalFilter {
             String userId = claims.getSubject();
             System.out.println(">>>> JWT 인증 필터 - claims get userId(subject) : " + userId);
 
+            // subject 없는 ACCESS 토큰은 거부
+            // (X-User-Id를 null/빈 값으로 전달하면 다운스트림이 이를 신뢰된 인증 ID로 처리하므로 위험)
+            if (userId == null || userId.isBlank()) {
+                System.out.println(">>>>>> ACCESS 토큰에 subject가 없음 - 거부");
+                throw new RuntimeException("ACCESS 토큰에 subject(userId)가 없음");
+            }
+
             // status 클레임 (사용자 상태, 검증 없이 헤더로 전달만)
             String status = claims.get("status", String.class);
             System.out.println(">>>> JWT 인증 필터 - claims get status : " + status);
