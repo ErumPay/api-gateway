@@ -1,0 +1,12 @@
+.git
+.gradle
+build
+bin
+out
+.idea
+.vscode
+*.iml
+*.iws
+*.ipr
+HELP.md
+README.md
