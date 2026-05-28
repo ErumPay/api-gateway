@@ -35,9 +35,9 @@ public class JwtAuthFilter implements GlobalFilter {
         "/actuator/info",
 
         // ── auth-service ──
-        "/auth-service/api/v1/auth/kakao/login",
-        "/auth-service/api/v1/auth/kakao/callback",
-        "/auth-service/api/auth/token/refresh"
+        "/api/v1/auth/kakao/login",
+        "/api/v1/auth/kakao/callback",
+        "/api/v1/auth/token/refresh"
 
         // ── PG/시뮬레이터: PG-가맹자 웹 존재 여부에 따라 보류 ──
 
