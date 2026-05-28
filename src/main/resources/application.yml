@@ -18,24 +18,15 @@ spring:
           # 전역 CORS(보안) 설정
           globalcors:
             cors-configurations:
-              '[/**]':                                # 이하 모든 경로에 대해 허용
+              '[/**]': # 이하 모든 경로에 대해 허용
                 allowed-origins:
-                  - 'http://localhost:3000'           # 예전 프론트 (예시, 추후 제거 가능)
-                  - 'http://localhost:5173'           # web-client (Vite 기본 포트)
-                  - 'http://localhost:19006'          # Expo Web 기본 포트
-                  # NOTE: Expo Go(모바일)는 native fetch라 CORS 영향 없음
-                  #       Expo dev tunnel/lan을 쓸 경우 실제 origin 추가 필요
+                  - 'http://localhost:3000'
+                  - 'http://localhost:19000'
                 allowed-methods: '*'                  # 모든 HTTP 메서드 허용
                 allowed-headers: '*'                  # 모든 헤더 허용
                 exposed-headers: '*'                  # 클라이언트에게 모든 헤더 노출 허용
                 allow-credentials: true               # 자격 증명 포함 요청 허용 (쿠키, 인증 정보 등)
 
-          # ──────────────────────────────────────────────────────────────
-          # 라우팅 정책
-          #  - 외부 호출 경로  : /{service-name}/**           (예: /auth-service/api/auth/kakao/login)
-          #  - 내부 컨트롤러   : StripPrefix=1 적용 후 실제 경로 (예: /api/auth/kakao/login)
-          #  - 미구현 서비스는 추정 경로를 # NOTE: 로 표기, 실제 구현 시 확인/수정
-          # ──────────────────────────────────────────────────────────────
           routes:
             # ============== Backend Services ==============
 

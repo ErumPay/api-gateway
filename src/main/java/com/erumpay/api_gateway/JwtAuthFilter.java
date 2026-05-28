@@ -24,34 +24,23 @@ import reactor.core.publisher.Mono;
 public class JwtAuthFilter implements GlobalFilter {
 
     @Value("${jwt.secret}")
-    private String secret;  // yml 파일에서 주입받은 JWT 시크릿 키 (auth-service와 동일해야 함)
+    private String secret;
 
     private SecretKey secretKey;
 
     // 토큰 검증 없이 통과하는 화이트리스트 등록 (prefix 매칭 — startsWith)
-    // NOTE: 게이트웨이 경로 기준(StripPrefix 적용 전). 즉 /{service-name}/... 형태로 작성
-    //       prefix 매칭이므로 하위 경로 모두 통과되는 점 주의
     private static final List<String> WHITE_LIST_PATHS = List.of(
         // ── 헬스체크 ──
         "/actuator/health",
         "/actuator/info",
 
-        // ── auth-service: 로그인/토큰 재발급/SMS 등 인증 전 진입점 ──
-        // NOTE: ACCESS 토큰 없이 호출되어야 하는 경로만 허용
-        "/auth-service/api/auth/kakao/login",     // 카카오 로그인 (JWT 발급 전)
-        "/auth-service/api/auth/token/refresh",   // ACCESS 재발급 (REFRESH 토큰으로 검증)
-        "/auth-service/api/auth/sms",             // SMS 인증 (로그인 전 단계)
-        "/auth-service/api/auth/dev",             // 개발용 토큰 발급 (운영 비노출 필요)
+        // ── auth-service ──
+        "/auth-service/api/v1/auth/kakao/login",
+        "/auth-service/api/v1/auth/kakao/callback",
+        "/auth-service/api/auth/token/refresh"
 
-        // ── PG/시뮬레이터: 별도 인증(API Key/HMAC) 사용 가능성 ──
-        // NOTE: 실제 인증 방식 확정 시 화이트리스트 범위 재조정
-        "/pg-auth-service",                       // 가맹점-PG 인증 (서버 to 서버)
-        "/pg-payment-service",                    // 가맹점→PG 결제 승인
-        "/merchant-service",                      // 가맹점 콘솔/API
-        "/card-simulator-service"                 // 테스트용 가상 카드사
+        // ── PG/시뮬레이터: PG-가맹자 웹 존재 여부에 따라 보류 ──
 
-        // ── 추가 검토 항목 (구현 시 활성화) ──
-        // , "/notification-service/api/v1/notification/webhook"  // FCM/외부 webhook 콜백
     );
 
     // 키 초기화 메서드
