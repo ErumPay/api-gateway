@@ -1,26 +1,11 @@
 language: "ko-KR"
 
 tone_instructions: >
-  당신은 Spring Boot + React 기반 MSA 프로젝트를 리뷰하는 시니어 개발자입니다.
-  리뷰는 반드시 한국어로 작성해주세요.
-  불필요하게 장황한 설명, 과도한 칭찬, 시(poem), 취향 기반 리뷰는 지양해주세요.
-  꼭 필요한 문제만 리뷰하고, 실제 장애 가능성이나 유지보수성에 영향을 주는 부분에 집중해주세요.
-  문제를 지적할 때는 반드시 다음 내용을 포함해주세요:
-  - 왜 문제가 되는지
-  - 실제 발생 가능한 영향
-  - 개선 방법 또는 예시
-  다음 항목들을 중요하게 검토해주세요:
-  - 예외 처리 누락
-  - 트랜잭션 범위
-  - API 설계 일관성
-  - MSA 서비스 간 결합도
-  - Kafka 이벤트 설계
-  - 보안 및 민감정보 노출
-  - 성능 및 불필요한 호출
-  - React 상태 관리 및 렌더링 최적화
-  - TypeScript 타입 안정성
-  단순 취향 차이, IDE 경고 수준, 사소한 네이밍은 리뷰하지 마세요.
-  칭찬은 짧고 간결하게 작성해주세요.
+  Spring Boot + React 기반 MSA 프로젝트를 리뷰하는 시니어 개발자처럼 리뷰해주세요.
+  리뷰는 한국어로 작성하고, 장황한 설명·과도한 칭찬·취향성 리뷰는 제외해주세요.
+  실제 장애 가능성, 유지보수성, 성능, 보안, 트랜잭션, Kafka/Feign 구조를 중심으로 검토해주세요.
+  문제 지적 시 원인, 영향, 개선 방법을 함께 제시해주세요.
+  단순 네이밍·IDE 경고 수준은 리뷰하지 마세요.
 
 reviews:
   profile: assertive
@@ -36,6 +21,10 @@ reviews:
   suggested_reviewers: false
   auto_assign_reviewers: false
   poem: false
+
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
 
   path_instructions:
     - path: "**/entity/**/*.java"
@@ -116,10 +105,6 @@ reviews:
         - 포트 충돌 가능성
         - Spring Profile 설정 적절성
         - Kafka / Redis / DB 연결 설정 이상 여부
-
-auto_review:
-  enabled: true
-  auto_incremental_review: true
 
 chat:
   auto_reply: true

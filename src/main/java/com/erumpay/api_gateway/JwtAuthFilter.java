@@ -28,21 +28,30 @@ public class JwtAuthFilter implements GlobalFilter {
 
     private SecretKey secretKey;
 
-    // 토큰 검증 없이 통과하는 화이트리스트 등록
-    // NOTE: 화이트리스트 경로는 정확히 일치하는 경로만 통과 (startsWith 아님)
-    //       prefix 매칭이 필요하면 filter()의 매칭 로직도 함께 수정
+    // 토큰 검증 없이 통과하는 화이트리스트 등록 (prefix 매칭 — startsWith)
+    // NOTE: 게이트웨이 경로 기준(StripPrefix 적용 전). 즉 /{service-name}/... 형태로 작성
+    //       prefix 매칭이므로 하위 경로 모두 통과되는 점 주의
     private static final List<String> WHITE_LIST_PATHS = List.of(
-        // 헬스체크
+        // ── 헬스체크 ──
         "/actuator/health",
-        "/actuator/info"
+        "/actuator/info",
 
-        // ──────────────────────────────────────────────────────────────
-        // 개발 중 billing-key 전체를 JWT 없이 호출하고 싶다면,
-        // 위 줄 끝에 콤마(,)를 붙이고 아래 주석을 해제하세요.
-        // (단, 이 경우 prefix 매칭이 필요하므로 filter() 안의
-        //  contains(endPoint) → startsWith 로직도 함께 켜야 합니다 - 아래 참고)
-        // ──────────────────────────────────────────────────────────────
-        // , "/billing-key-service"
+        // ── auth-service: 로그인/토큰 재발급/SMS 등 인증 전 진입점 ──
+        // NOTE: ACCESS 토큰 없이 호출되어야 하는 경로만 허용
+        "/auth-service/api/auth/kakao/login",     // 카카오 로그인 (JWT 발급 전)
+        "/auth-service/api/auth/token/refresh",   // ACCESS 재발급 (REFRESH 토큰으로 검증)
+        "/auth-service/api/auth/sms",             // SMS 인증 (로그인 전 단계)
+        "/auth-service/api/auth/dev",             // 개발용 토큰 발급 (운영 비노출 필요)
+
+        // ── PG/시뮬레이터: 별도 인증(API Key/HMAC) 사용 가능성 ──
+        // NOTE: 실제 인증 방식 확정 시 화이트리스트 범위 재조정
+        "/pg-auth-service",                       // 가맹점-PG 인증 (서버 to 서버)
+        "/pg-payment-service",                    // 가맹점→PG 결제 승인
+        "/merchant-service",                      // 가맹점 콘솔/API
+        "/card-simulator-service"                 // 테스트용 가상 카드사
+
+        // ── 추가 검토 항목 (구현 시 활성화) ──
+        // , "/notification-service/api/v1/notification/webhook"  // FCM/외부 webhook 콜백
     );
 
     // 키 초기화 메서드
@@ -72,12 +81,9 @@ public class JwtAuthFilter implements GlobalFilter {
         String method = exchange.getRequest().getMethod().name();
         System.out.println(">>>>>> 3) 요청 메서드 : " + method);
 
-        // 2. 화이트리스트 경로 여부 확인
+        // 2. 화이트리스트 경로 여부 확인 (prefix 매칭)
         System.out.println(">>>> 2) 화이트리스트 경로 여부 확인");
-        if (WHITE_LIST_PATHS.contains(endPoint)) {
-            // 위 화이트리스트에 "/billing-key-service" 같은 prefix를 넣고 싶다면
-            // 이 줄을 아래로 바꿔서 startsWith 매칭으로 켜세요:
-            //   if (WHITE_LIST_PATHS.stream().anyMatch(endPoint::startsWith)) {
+        if (WHITE_LIST_PATHS.stream().anyMatch(endPoint::startsWith)) {
             System.out.println(">>>>>> 1) 화이트리스트 경로이므로 토큰 검증 없이 통과 : " + endPoint);
             return chain.filter(exchange);
         }
