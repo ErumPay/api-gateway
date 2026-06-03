@@ -33,6 +33,10 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
+    // Swagger 통합 (게이트웨이는 WebFlux 기반이므로 webflux-ui 사용)
+    // 각 서비스는 webmvc-ui 사용 (Spring MVC + Tomcat 기반인 경우)
+    implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.0'
+
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
