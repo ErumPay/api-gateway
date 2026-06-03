@@ -122,3 +122,52 @@ management:
 # JWT 설정
 jwt:
   secret: ${JWT_SECRET:erumpay-auth-service-jwt-secret-key-must-be-at-least-256-bits-long-for-hs256}
+
+# ============== Swagger 통합 ==============
+# 접속 URL: http://localhost:8080/swagger-ui.html
+# 본인 담당 서비스의 springdoc 셋업(의존성/yml/OpenApiConfig)을 마친 뒤,
+# 아래 urls 목록에서 본인 서비스 항목의 주석만 풀면 통합 드롭다운에 노출됩니다.
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    urls:
+      # - name: auth-service
+      #   url: /auth-service/v3/api-docs
+      #   display-name: Auth Service
+
+      # - name: card-service
+      #   url: /card-service/v3/api-docs
+      #   display-name: Card Service
+
+      # - name: payment-service
+      #   url: /payment-service/v3/api-docs
+      #   display-name: Payment Service
+
+      # - name: recommendation-service
+      #   url: /recommendation-service/v3/api-docs
+      #   display-name: Recommendation Service
+
+      # - name: notification-service
+      #   url: /notification-service/v3/api-docs
+      #   display-name: Notification Service
+
+      # - name: pg-auth-service
+      #   url: /pg-auth-service/v3/api-docs
+      #   display-name: PG Auth Service
+
+      # - name: billing-key-service
+      #   url: /billing-key-service/v3/api-docs
+      #   display-name: Billing Key Service
+
+      # - name: pg-payment-service
+      #   url: /pg-payment-service/v3/api-docs
+      #   display-name: PG Payment Service
+
+      # - name: merchant-service
+      #   url: /merchant-service/v3/api-docs
+      #   display-name: Merchant Service
+
+      # - name: card-simulator-service
+      #   url: /card-simulator-service/v3/api-docs
+      #   display-name: Card Simulator Service

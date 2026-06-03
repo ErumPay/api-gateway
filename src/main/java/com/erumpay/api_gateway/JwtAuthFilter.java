@@ -37,10 +37,27 @@ public class JwtAuthFilter implements GlobalFilter {
         // ── auth-service ──
         "/api/v1/auth/kakao/login",
         "/api/v1/auth/kakao/callback",
-        "/api/v1/auth/token/refresh"
+        "/api/v1/auth/token/refresh",
 
         // ── PG/시뮬레이터: PG-가맹자 웹 존재 여부에 따라 보류 ──
 
+        // ── Swagger 통합 (api-gateway 자체 UI) ──
+        "/swagger-ui",
+        "/v3/api-docs",
+        "/webjars",
+
+        // ── Swagger 통합 (각 서비스 OpenAPI 문서) ──
+        // 다운스트림 서비스가 /v3/api-docs를 아직 안 열어둔 경우엔 단순히 404가 떨어집니다(보안 영향 없음).
+        "/auth-service/v3/api-docs",
+        "/card-service/v3/api-docs",
+        "/payment-service/v3/api-docs",
+        "/recommendation-service/v3/api-docs",
+        "/notification-service/v3/api-docs",
+        "/pg-auth-service/v3/api-docs",
+        "/billing-key-service/v3/api-docs",
+        "/pg-payment-service/v3/api-docs",
+        "/merchant-service/v3/api-docs",
+        "/card-simulator-service/v3/api-docs"
     );
 
     // 키 초기화 메서드
