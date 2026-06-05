@@ -120,8 +120,14 @@ management:
         include: health,info
 
 # JWT 설정
+# - jwt.secret    : auth-service(B2C 사용자) 토큰 검증용
+# - pg.jwt.secret : pg-auth-service(B2B 가맹점/관리자) 토큰 검증용
 jwt:
   secret: ${JWT_SECRET:erumpay-auth-service-jwt-secret-key-must-be-at-least-256-bits-long-for-hs256}
+
+pg:
+  jwt:
+    secret: ${PG_JWT_SECRET:}
 
 # ============== Swagger 통합 ==============
 # 접속 URL: http://localhost:8080/swagger-ui.html
