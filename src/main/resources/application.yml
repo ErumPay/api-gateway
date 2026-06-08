@@ -112,12 +112,33 @@ spring:
               filters:
                 - StripPrefix=1
 
-# 헬스체크 노출
+            # ============== OCR Service (Python FastAPI) ==============
+
+            # card-ocr-service 라우팅 (8086)
+            # 인증 없는 통로 역할 (WL 처리 — JwtAuthFilter 참조)
+            - id: card-ocr-service
+              uri: ${CARD_OCR_SERVICE_URI:http://localhost:8086}
+              predicates:
+                - Path=/card-ocr-service/**
+              filters:
+                - StripPrefix=1
+
+# 헬스체크 노출 + 분산 추적(Zipkin)
 management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health
+  tracing:
+    sampling:
+      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_ENDPOINT:http://erumpay-zipkin.platform-operations.svc.cluster.local:9411/api/v2/spans}
 
 # JWT 설정
 # - jwt.secret    : auth-service(B2C 사용자) 토큰 검증용

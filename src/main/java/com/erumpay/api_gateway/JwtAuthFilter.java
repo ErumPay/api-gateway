@@ -48,7 +48,6 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     private static final List<String> WHITE_LIST_PATHS = List.of(
         // ── 헬스체크 ──
         "/actuator/health",
-        "/actuator/info",
 
         // ── Swagger 통합 (api-gateway 자체 UI) ──
         "/swagger-ui",
@@ -72,15 +71,17 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         "/auth-service/api/v1/auth/kakao/login",
         "/auth-service/api/v1/auth/token/refresh",
 
-        // ── pg-auth-service (B2B 가맹점/관리자, 로그인/재발급/가입 흐름) ──
-        // 가입 흐름(terms/agree, signup)은 SIGNUP 토큰을 사용하므로 GW에서 ACCESS 검증 불가 → WL 후 pg-auth가 자체 검증
+        // ── pg-auth-service (B2B 가맹점/관리자, 로그인/재발급/가입/로그아웃 흐름) ──
+        // 가입 흐름(terms/agree, signup)은 SIGNUP, 로그아웃은 REFRESH 토큰을 사용하므로 GW에서 ACCESS 검증 불가 → WL 후 pg-auth가 자체 검증
         "/pg-auth-service/api/v1/auth/health",
         "/pg-auth-service/api/v1/auth/merchant/kakao/login",
         "/pg-auth-service/api/v1/auth/login/oauth2/code/kakao",
         "/pg-auth-service/api/v1/auth/token/refresh",
         "/pg-auth-service/api/v1/auth/admin/login",
+        "/pg-auth-service/api/v1/auth/admin/logout",
         "/pg-auth-service/api/v1/auth/merchant/terms/agree",
         "/pg-auth-service/api/v1/auth/merchant/signup",
+        "/pg-auth-service/api/v1/auth/merchant/logout",
 
         // ── payment-service: QR 흐름 ──
         // /qr/request : 가맹점 QR 생성 (현 시점 API Key 발급 체계 미비, 테스트 진행을 위해 WL)
@@ -90,7 +91,11 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
         // ── payment-service: 가맹점 SDK ──
         // Authorization 값은 JWT가 아니라 가맹점 API Key. 다운스트림 MerchantApiKeyResolver가 검증.
-        "/payment-service/api/v1/merchant/payments"
+        "/payment-service/api/v1/merchant/payments",
+
+        // ── card-ocr-service: 카드 등록 전 단계의 순수 OCR 변환 ──
+        // 사용자 식별이 불필요하며, 카드 등록은 card-service에서 토큰 검증 후 수행.
+        "/card-ocr-service/api/v1/cards/ocr"
     );
 
     // PG(pg-auth-service / merchant-service) 라우트 prefix.
