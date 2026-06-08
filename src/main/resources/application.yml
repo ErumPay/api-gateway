@@ -1,0 +1,200 @@
+# API Gateway 애플리케이션 설정 파일 (YAML 형식)
+
+# 게이트웨이 포트
+server:
+  port: 8080
+
+# Spring Boot 설정
+spring:
+  # 애플리케이션 설정
+  application:
+    name: api-gateway
+
+  # Spring Cloud Gateway 설정
+  cloud:
+    gateway:
+      server:
+        webflux:
+          # 전역 CORS(보안) 설정
+          globalcors:
+            cors-configurations:
+              '[/**]': # 이하 모든 경로에 대해 허용
+                allowed-origins:
+                  - 'http://localhost:3000'
+                  - 'http://localhost:19000'
+                allowed-methods: '*'                  # 모든 HTTP 메서드 허용
+                allowed-headers: '*'                  # 모든 헤더 허용
+                exposed-headers: '*'                  # 클라이언트에게 모든 헤더 노출 허용
+                allow-credentials: true               # 자격 증명 포함 요청 허용 (쿠키, 인증 정보 등)
+
+          routes:
+            # ============== Backend Services ==============
+
+            # auth-service 라우팅 (8081)
+            - id: auth-service
+              uri: ${AUTH_SERVICE_URI:http://localhost:8081}
+              predicates:
+                - Path=/auth-service/**
+              filters:
+                - StripPrefix=1
+
+            # card-service 라우팅 (8082)
+            - id: card-service
+              uri: ${CARD_SERVICE_URI:http://localhost:8082}
+              predicates:
+                - Path=/card-service/**
+              filters:
+                - StripPrefix=1
+
+            # payment-service 라우팅 (8083)
+            - id: payment-service
+              uri: ${PAYMENT_SERVICE_URI:http://localhost:8083}
+              predicates:
+                - Path=/payment-service/**
+              filters:
+                - StripPrefix=1
+
+            # recommendation-service 라우팅 (8084)
+            - id: recommendation-service
+              uri: ${RECOMMENDATION_SERVICE_URI:http://localhost:8084}
+              predicates:
+                - Path=/recommendation-service/**
+              filters:
+                - StripPrefix=1
+
+            # notification-service 라우팅 (8085)
+            - id: notification-service
+              uri: ${NOTIFICATION_SERVICE_URI:http://localhost:8085}
+              predicates:
+                - Path=/notification-service/**
+              filters:
+                - StripPrefix=1
+
+            # ============== PG (Payment Gateway) Services ==============
+
+            # pg-auth-service 라우팅 (8091)
+            - id: pg-auth-service
+              uri: ${PG_AUTH_SERVICE_URI:http://localhost:8091}
+              predicates:
+                - Path=/pg-auth-service/**
+              filters:
+                - StripPrefix=1
+
+            # billing-key-service 라우팅 (8092)
+            - id: billing-key-service
+              uri: ${BILLING_KEY_SERVICE_URI:http://localhost:8092}
+              predicates:
+                - Path=/billing-key-service/**
+              filters:
+                - StripPrefix=1
+
+            # pg-payment-service 라우팅 (8093)
+            - id: pg-payment-service
+              uri: ${PG_PAYMENT_SERVICE_URI:http://localhost:8093}
+              predicates:
+                - Path=/pg-payment-service/**
+              filters:
+                - StripPrefix=1
+
+            # merchant-service 라우팅 (8094)
+            - id: merchant-service
+              uri: ${MERCHANT_SERVICE_URI:http://localhost:8094}
+              predicates:
+                - Path=/merchant-service/**
+              filters:
+                - StripPrefix=1
+
+            # card-simulator-service 라우팅 (8095)
+            - id: card-simulator-service
+              uri: ${CARD_SIMULATOR_SERVICE_URI:http://localhost:8095}
+              predicates:
+                - Path=/card-simulator-service/**
+              filters:
+                - StripPrefix=1
+
+            # ============== OCR Service (Python FastAPI) ==============
+
+            # card-ocr-service 라우팅 (8086)
+            # 인증 없는 통로 역할 (WL 처리 — JwtAuthFilter 참조)
+            - id: card-ocr-service
+              uri: ${CARD_OCR_SERVICE_URI:http://localhost:8086}
+              predicates:
+                - Path=/card-ocr-service/**
+              filters:
+                - StripPrefix=1
+
+# 헬스체크 노출 + 분산 추적(Zipkin)
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+  tracing:
+    sampling:
+      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_ENDPOINT:http://erumpay-zipkin.platform-operations.svc.cluster.local:9411/api/v2/spans}
+
+# JWT 설정
+# - jwt.secret    : auth-service(B2C 사용자) 토큰 검증용
+# - pg.jwt.secret : pg-auth-service(B2B 가맹점/관리자) 토큰 검증용
+jwt:
+  secret: ${JWT_SECRET:erumpay-auth-service-jwt-secret-key-must-be-at-least-256-bits-long-for-hs256}
+
+pg:
+  jwt:
+    secret: ${PG_JWT_SECRET:}
+
+# ============== Swagger 통합 ==============
+# 접속 URL: http://localhost:8080/swagger-ui.html
+# 본인 담당 서비스의 springdoc 셋업(의존성/yml/OpenApiConfig)을 마친 뒤,
+# 아래 urls 목록에서 본인 서비스 항목의 주석만 풀면 통합 드롭다운에 노출됩니다.
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    urls:
+      # - name: auth-service
+      #   url: /auth-service/v3/api-docs
+      #   display-name: Auth Service
+
+      # - name: card-service
+      #   url: /card-service/v3/api-docs
+      #   display-name: Card Service
+
+      # - name: payment-service
+      #   url: /payment-service/v3/api-docs
+      #   display-name: Payment Service
+
+      # - name: recommendation-service
+      #   url: /recommendation-service/v3/api-docs
+      #   display-name: Recommendation Service
+
+      # - name: notification-service
+      #   url: /notification-service/v3/api-docs
+      #   display-name: Notification Service
+
+      # - name: pg-auth-service
+      #   url: /pg-auth-service/v3/api-docs
+      #   display-name: PG Auth Service
+
+      # - name: billing-key-service
+      #   url: /billing-key-service/v3/api-docs
+      #   display-name: Billing Key Service
+
+      # - name: pg-payment-service
+      #   url: /pg-payment-service/v3/api-docs
+      #   display-name: PG Payment Service
+
+      # - name: merchant-service
+      #   url: /merchant-service/v3/api-docs
+      #   display-name: Merchant Service
+
+      # - name: card-simulator-service
+      #   url: /card-simulator-service/v3/api-docs
+      #   display-name: Card Simulator Service
