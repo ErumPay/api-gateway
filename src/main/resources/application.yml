@@ -159,42 +159,42 @@ springdoc:
     enabled: true
     path: /swagger-ui.html
     urls:
-      # - name: auth-service
-      #   url: /auth-service/v3/api-docs
-      #   display-name: Auth Service
+      - name: auth-service
+        url: /auth-service/v3/api-docs
+        display-name: Auth Service
 
-      # - name: card-service
-      #   url: /card-service/v3/api-docs
-      #   display-name: Card Service
+      - name: card-service
+        url: /card-service/v3/api-docs
+        display-name: Card Service
 
-      # - name: payment-service
-      #   url: /payment-service/v3/api-docs
-      #   display-name: Payment Service
+      - name: payment-service
+        url: /payment-service/v3/api-docs
+        display-name: Payment Service
 
-      # - name: recommendation-service
-      #   url: /recommendation-service/v3/api-docs
-      #   display-name: Recommendation Service
+      - name: recommendation-service
+        url: /recommendation-service/v3/api-docs
+        display-name: Recommendation Service
 
-      # - name: notification-service
-      #   url: /notification-service/v3/api-docs
-      #   display-name: Notification Service
+      - name: notification-service
+        url: /notification-service/v3/api-docs
+        display-name: Notification Service
 
-      # - name: pg-auth-service
-      #   url: /pg-auth-service/v3/api-docs
-      #   display-name: PG Auth Service
+      - name: pg-auth-service
+        url: /pg-auth-service/v3/api-docs
+        display-name: PG Auth Service
 
-      # - name: billing-key-service
-      #   url: /billing-key-service/v3/api-docs
-      #   display-name: Billing Key Service
+      - name: billing-key-service
+        url: /billing-key-service/v3/api-docs
+        display-name: Billing Key Service
 
-      # - name: pg-payment-service
-      #   url: /pg-payment-service/v3/api-docs
-      #   display-name: PG Payment Service
+      - name: pg-payment-service
+        url: /pg-payment-service/v3/api-docs
+        display-name: PG Payment Service
 
-      # - name: merchant-service
-      #   url: /merchant-service/v3/api-docs
-      #   display-name: Merchant Service
+      - name: merchant-service
+        url: /merchant-service/v3/api-docs
+        display-name: Merchant Service
 
-      # - name: card-simulator-service
-      #   url: /card-simulator-service/v3/api-docs
-      #   display-name: Card Simulator Service
+      - name: card-simulator-service
+        url: /card-simulator-service/v3/api-docs
+        display-name: Card Simulator Service
