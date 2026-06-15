@@ -22,6 +22,8 @@ spring:
                 allowed-origins:
                   - 'http://localhost:3000'
                   - 'http://localhost:19000'
+                  - 'https://pg.eunna.store'        # 운영 - PG
+                  - 'https://merchant.eunna.store'  # 운영 - 가맹점
                 allowed-methods: '*'                  # 모든 HTTP 메서드 허용
                 allowed-headers: '*'                  # 모든 헤더 허용
                 exposed-headers: '*'                  # 클라이언트에게 모든 헤더 노출 허용
