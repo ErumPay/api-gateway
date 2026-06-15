@@ -29,6 +29,12 @@ spring:
                 exposed-headers: '*'                  # 클라이언트에게 모든 헤더 노출 허용
                 allow-credentials: true               # 자격 증명 포함 요청 허용 (쿠키, 인증 정보 등)
 
+          # 다운스트림으로 넘기기 전 Origin 헤더 제거
+          # → 각 서비스가 전달된 Origin을 자체 CORS로 재검사해 403 내는 것 방지
+          # → CORS는 게이트웨이에서만 단일 처리 (헤더 중복도 방지)
+          default-filters:
+            - RemoveRequestHeader=Origin
+
           routes:
             # ============== Backend Services ==============
 
